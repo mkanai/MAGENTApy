@@ -1,0 +1,150 @@
+# REQUIRED INPUT FILES
+# --------------------
+
+# Input file #1:
+
+# Name of file with GWAS results table in the following format (from individual GWAS or GWAS meta-analyses):
+# REMOVE SUFFIX FROM FILE NAME
+# Each row refers to a single SNP (do not add header)
+# columns: (1) SNP chr number, (2) SNP chr position, bp, (3) GWAS z-scores (if available), (4) GWAS p-value (required)
+
+GWAS_SNP_score_file_name: 'GWAS_SNP_ChrNumPosZscoresPval_Example'
+
+# Input file #2:
+
+# Name of file with gene sets to be tested by GSEA (REMOVE SUFFIX FROM FILE NAME):
+# File format: Each row refers to a different gene set (do not add header). All entries HAVE to be tab-delimited (very important, not space-delimited)
+# Columns: (1) database name [name sould not be separated by spaces], (2) gene set name [name should not be separated by spaces or underscores],
+# (columns 3 through n): Entrez IDs of all genes in gene set separated by tabs.
+
+GeneSet_db_file_name: 'INGENUITY_BIOCARTA'
+
+# contains gene sets from several databases: Gene ontology, PANTHER (biological processes,
+# molecular functions, metabolic and signaling pathways), KEGG, Ingenuity pathways
+# It takes about 15-20 hours to run MAGENTA on all four databases inputed together; for faster running time each database can be run separately (See README for file names)
+
+# Other gene set files you can use (described in README file) are:
+# 'GO_PANTHER_INGENUITY_KEGG_REACTOME_BIOCARTA'
+# 'GO_terms_BioProc_MolFunc_db'
+# 'KEGG_pathways_db'
+# 'Ingenuity_pathways_db'
+# 'PANTHER_BioProc_db'
+# 'PANTHER_MolFunc_db'
+# 'PANTHER_pathways_db'
+# 'Mitochondrial_gene_sets'; % set of nuclear encoded mitochondrial genes from MitoCarta compendium
+
+
+# OPTIONAL INPUT FILES:
+# --------------------
+
+# Input file #3 (recommended):
+
+# File name for list of a set of Gene IDs or Gene Names of genes of interest, such as known disease/trait genes
+# (REMOVE SUFFIX FROM FILE NAME)
+# This list can be used (1) to label the presence of onr or more of these genes in each of the analyzed gene sets/pathways;
+# (2) one can choose to remove these genes from the GSEA analysis.
+# Fomart: a single column of gene Entrez IDs or gene symbols - preferably gene IDS (do not add header)
+# User can use function: "Extract_genes_around_SNPs.m" to extract all geners within a given physical distance around a given set
+# of SNPs. instructions for use is in the function's code/
+
+Flag_gene_set_file_name: ''
+# Flag_gene_set_file_name: 'DB-RA-DrugGene'
+
+# State whether to work with Gene ID or Gene Symbol
+match_genes_GeneID: 1 # 1=match genes according to gene ID; 0=match genes according to gene HUGO/RefFlat symbols
+
+
+# Input file #4:
+
+# If available, name of file that contains the odds ratios of all SNPs in first column.
+# Optional - to add upper and lower 95% confidence intervals in second and third columns.
+# REMOVE HEADER FROM FILE.
+# should be same number of rows as GWAS SNP p-value file (GWAS_SNP_score_file_name)
+# (REMOVE SUFFIX FROM FILE NAME)
+
+# Used only when printing out gene association scores for all genes in a limited number of gene sets
+# that are listed in the Input file #2.
+
+GWAS_OR_filename: 'GWAS_SNP_ChrNumPosZscoresPval_Example_SNPOR'
+
+
+# Input file #5:
+
+# Name of file that contains in one column the rs numbers of all SNPs without header
+# should be same number of rows as GWAS SNP p-value file (GWAS_SNP_score_file_name)
+# (REMOVE SUFFIX FROM FILE NAME)
+
+# Used only when printing out gene association scores for all genes in a limited number of gene sets
+# that are listed in the Input file #2.
+
+SNP_rs_num_file_name: 'GWAS_SNP_ChrNumPosZscoresPval_Example_SNPrs'
+
+
+# INPUT PARAMETERS
+# --------------------
+
+# Enter here name of experiment (e.g. disease/trait name and gene set database)
+exp_label: 'GWAS_Total_05_10'
+code_name: 'Run_MAGENTA.py'
+
+# Please specify the genome build of the SNP positions of your inputed GWAS or meta-analysis SNP association p-values
+Genome_build: 'NCBI37' # Genome builds NCBI36 (hg18) and NCBI37 (hg19) are currently available
+
+Flag_gs: 1 # 1=flag the input subset of genes (e.g. disease/trait genes)
+
+# 1 = remove a predefined subset of genes listed in 'Flag_gene_set_file_name' from analysis (e.g. genes in validated disease association regions) from GSEA;
+# 0 = do not remove predefined set of genes from GSEA
+Remove_gs: 0
+
+# 1 = remove genes that fall in HLA region (chr6:29,710,331-33,150,000)
+# 0 = keep all genes
+Remove_HLA: 1 # (default: remove HLA region due to high LD and high gene density in region)
+HLA_region: {st: 25000000, en: 35000000}
+# HLA_region: {start: 29710331, end: 33150000}
+
+
+num_gs_simul: 10000 # number of gene set permutations to begin with for GSEA p-value estimation. number will be increased with GSEA p-value<1e-4.
+# (i.e. number of times random gene sets of identical size to tested gene-set are randomly sampled from genome for GSEA significance estimation)
+num_perm_limit: 1000000 # upper limit of gene set permutations (number may increase per gene set if GSEA p<1/num_gs_simul, and will stop at the upper bound set here).
+# RECOMMENDED UPPER BOUND=1e6 PERMUTATIONS
+
+
+Gene_boundr_upstr: 110000 # added distance (in base pair units) uptream to gene's most extreme start site
+Gene_boundr_downstr: 40000 # added distance (in base pair units) downtream to gene's most extreme end site
+
+# Choose "1" if you want to run GSEA, otherwise "0"
+run_GSEA: 1
+# Choose GSEA statistical test: 1=GSEA-cutoff test, 4=Mann-Whitney rank sum test (set "calculate_FDR" option to '0' since option not available yet for rank sum test)
+GSEA_method: 1
+
+# cutoffs to use for GSEA test (top X% of all gene scores ranked in order of significance)
+# Simulations suggest 95 percentile cutoff has optimatl power (of 99, 95, 90, 75 and 50 percentiles of all gene scores)
+# However, one might want to chose 75 percentile if complex disease or trait is highly polygenic
+top_percen_cutoffs: [5, 10] # default: 95 percentile and 90 percentile
+
+# limit of gene set size
+min_gs_size: 10 # minimum number of genes in gene set (default>=10 genes)
+max_gs_size: 300 # maximum number of genes in a gene set (default=no limit)
+
+choose_unique_genes: 1 # 1 = correct for physcial proximity of genes in each given gene set, by removing all but one gene of a subset of genes
+# that were assigned the same best SNP; choose gene with most significant corrected score from each such subset of genes.
+# 0 = do not apply physcial clustering correction.
+
+# Enter 1 to print in the output results file gene names and Entrez IDs of those genes in the input list of genes in file: Flag_gene_set_file_name (e.g. trait/disease genes)
+# that belong to each analyzed pathway or gene set.
+print_trait_gene_names_in_gs: 1
+
+# Enter 1 for printing gene association scores for all gene sets present in Input file #2. Each gene set in a separate file
+# (ending with suffix .geneset; ~10-50 kbytes per file on average).
+# To print the gene scores for a limited number of gene sets, include only the gene sets of interst in Input file #2.
+# Coming soon - the option to state the names of pathways for which gene score print outs is desired.
+print_gene_scores: 1 # 1=print list of genes and their scores for one or a few gene sets
+
+# The following two options (print_rs_num, print_best_SNP_OR) are relevant only if printing the gene scores for a given set
+# of gene sets into output files:
+# Enter 1 for printing best SNP rs numbers in gene score output file for a given gene set; enter 0 to not print rs numbers
+print_rs_num: 0
+print_best_SNP_OR: 0
+
+# Enter 1 to calculate a false discovery rate; enter 0 not to calculate FDR
+calculate_FDR: 1

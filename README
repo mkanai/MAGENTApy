@@ -1,0 +1,114 @@
+Copyright, February 2010, Ayellet Segre, Mark Daly, David Altshuler, Broad Institute, 7 Cambridge Center, Cambridge, MA 02142, USA
+
+This documentation provides instructions for local use of the MAGENTA software in Matlab or Unix environment.
+The code was written in Matlab version R2009b by Ayellet V. Segre.
+
+This software accompanies the paper:
+
+Ayellet V. Segre, DIAGRAM Consortium, MAGIC investigators, Leif Groop, Vamsi K. Mootha, Mark J. Daly, and David Altshuler. 
+Common Inherited Variation in Mitochondrial Genes is not Enriched for Associations with Type 2 Diabetes or Related Glycemic Traits.
+PLoS Genetics, in press, 2010.
+
+Disclaimer: 
+
+This software is distributed as is. The authors take no responsibility for any use or misuse. 
+If your work benefits from the use of our software package please cite the reference above.
+
+Check for updates at: http://www.broadinstitute.org/mpg/magenta.
+
+------------------------
+NOTE: The current version of MAGENTA uses build NCBI36/hg18 of the genome and is most compatible for studies of European individuals (LD properties used for
+correcting for confounders on calculating gene association p-values were based on CEU from HapMap. Similar LD properties can be calculated for other ethnic
+backgrounds using appropriate HapMap data and as described in Segre et al, PLoS Genetics 2010).
+
+You also have the option of removing the HLA region which is in high LD from the pathway analysis (which is currently the default; see 'VARIABLES TO BE DEFINED BY 
+USER' section). 
+-------------------------
+
+-------------------------------------------------------------------------------------------------
+Instructions for running MAGENTA on SNP association p-values from genome-wide association studies:
+-------------------------------------------------------------------------------------------------
+
+1. Unzip the folder and make sure to unzip with the option to preserve directory structure.
+tar -zxvf MAGENTA_software_package_vs2_hg18_hg19_July2011.tar.gz
+
+2. Open main program file called: "Run_MAGENTA_vs2_DATE.m" and fill in input file names and input parameters at the beginning of the program 
+(follow comments in code under section "VARIABLES TO BE DEFINED BY USER").
+
+3. Place all input files in the main directory "MAGENTA_software_package_vs2_DATE/":
+
+*** New!! You can choose between genome build 36 (NCBI36/hg18) and build 37 (NCBI37/hg19).  
+Define build under Option: Genome_build='NCBI37' or 'NCBI36', on row 118 in Run_MAGENTA_vs2_DATE.m
+
+(a) Genome-wide association (GWA) study or meta-analysis SNP z-scores/p-values results (Required: 3 columns: (1) SNP chr number, (2) SNP chr position, bp, (3) SNP 
+association p-value; each row refers to a different genotyped or imputed SNP).
+
+(b) Optional: list of gene IDs for a subset of genes of interest, such as genes that lie near validated SNPs associated with trait or disease of interest:
+e.g. for lipid traits, file names:
+LDL_GeneIDs_Meta20k_010810
+
+(c) Gene set/Pathway input file (input one file per run): File with gene-sets of interest to be tested by MAGENTA; each row a different gene set; Columns 
+(must be tab-delimited): 
+(1) Database name, (2) Gene set name, (3-n) gene Entrez IDs for all genes per gene-set (each row a different gene set):
+
+Databases available here are:
+
+"GO_PANTHER_INGENUITY_KEGG_REACTOME_BIOCARTA" - contains gene sets from all databases available in this software package:
+	- Gene Ontology -  Downloaded from Gene Ontology, courtesy of the Lettre lab (http://www.mhi-humangenetics.org/) (April 2010): 
+	- Ingenuity (June 2008), KEGG (2010), Panther signaling pathways  - Downloaded from MSigDB from GSEA website
+	- PANTHER biological proceses and molecular functions - Downloaded from PANTHER (Jan. 2010)
+
+"GO_PANTBP_PANTMF_PANT_ING_KEGG2010" - Gene sets from all databases concatenated into one file, not including Reactome and BioCarta
+
+Different subsets of these databases are also available in individual files:
+
+Ingenuity (June 2008): "Ingenuity_pathways_db"
+KEGG (June 2008): "KEGG_pathways_db"
+KEGG (2010): "KEGG_pathways_db_Oct2010"
+PANTHER (June 2008): "PANTHER_pathways_db"
+GO and PANTHER (2010): "GO_terms_BioProc_MolFunc_db"
+Biological proceses downloaded from PANTHER (Jan. 2010): "PANTHER_BioProc_db"
+Molecular functions downloaded from PANTHER (Jan. 2010): "PANTHER_MolFunc_db"
+
+* MSigDB_GO_BP_MF_CC_Before_GWAS_2006 - Gene Ontoogy terms downloaded from MSgiDB (GSEA web site) on 2006 before majority of GWAS analyses.
+  MSig.c5.bp stands for biological process term, MSig.c5.mf stands for molecular function term, and MSig.c5.cc stands for cellular localization term.
+* Mitochondria-related gene sets used in Segre et al., PLoS Genetics 2010 (MAGENTA) paper: "Mitochondrial_gene_sets"
+* Biological processes relevant to lipid biology, downloaded from PANTHER database (http://www.pantherdb.org/): 
+"PANTHER_lipid_only_BiolProcesses_GSEA_format_120609"
+
+* The KEGG, Ingenuity, and PANTHER signaling and metabolic pathways were Downloaded from the Molecular Signatures Database
+(http://www.broadinstitute.org/gsea/msigdb/index.jsp), compiled by members of the Computational Biology and Bioinformatics group at the Broad Institute led by Jill 
+Mesirov.
+I would like to thank members of the Purcell lab for help with parsing the gene set files at initial stages of this project.
+
+4. Run main program "Run_MAGENTA_vs2_DATE.m" either from within Matlab application or from unix command line after loading matlab (e.g. use matlab).
+An example of a command for running MAGENTA using LSF: Run_busb_command_line.sh
+
+Program needs to be run in main directory where all functions are contained: MAGENTA_software_package_vs2_DATE/.
+
+* If running from within matlab, type: "Run_MAGENTA_vs2_DATE" on command line and the gene set enrichment analysis will run.
+
+* If running program from unix command line, with lsf, for example, the following command can be used (see also file 'Run_busb_command_line.sh'): 
+bsub -q queue_name -o output_file_name -e error_file_name matlab -nodisplay -nodesktop -nosplash -nojvm -r "Run_MAGENTA_vs2_DATE.m" 
+
+5. Output files:
+All output files will be printed to an output directory called: Output_MAGENTA_ . EXPERIMENT_NAME . GENEBOUNDARIES . NUMBER_OF_GENE_SET_PERMUTATIONS . DATE
+e.g. "Output_MAGENTA_LDL_lipid_pathways_110kb_upstr_40kb_downstr_10000perm_DATE"   
+
+Output files include (1) a log file that summarizes the parameters used for the specific analysis run, and lists a detailed description of the labels in the MAGENTA
+results table; (2) a tab-delimiated table with the GSEA results, each row refering to a separate gene set, in the ".results" file. This files will contain the 
+MAGENTA p-values and FDR for all gene sets and databases tested along with several other pieces of information. I recommend sorting the gene sets within each 
+database separately based on the nominal GSEA p-value. Two enrichment cutoffs are used as the default (95 percentile and 75 percentile of all gene scores). The 75 
+percentile test may be more powerful for complex traits or disease that are highly polygenic (hundreds of loci).
+
+6. Running time: It typically takes 45-60 minutes to calculate gene scores for all genes in the genome (including correction for confounders), and 10-30 seconds to
+perform GSEA for each gene-set/pathway, depending on the gene-set size. It could take up to 24 hours to run MAGENTA on the full set of gene sets available: 
+'GO_PANTHER_INGENUITY_KEGG_REACTOME_BIOCARTA'
+
+-------------------------
+
+For questions or comments please contact Ayellet Segre at asegre [at] broadinstitute [dot] org.
+Please check for updates at http://www.broadinstitute.org/mpg/magenta.
+
+Last updated: July 22, 2011.
+

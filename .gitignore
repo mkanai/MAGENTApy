@@ -1,0 +1,5 @@
+# python bytecode
+*.pyc
+
+# output folder
+Output_MAGENTA_*
