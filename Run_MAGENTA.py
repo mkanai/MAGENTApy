@@ -444,11 +444,11 @@ def magenta(config):
 
         if run_GSEA == 1:
             if GSEA_method == 1:
-                start_time = time.time()
+                # start_time = time.time()
                 EnrichPval_multipleCutoffs, obs_num_gs_above_cutoff, obs_fract_above_cutoff, record_rand_gs_num, record_rand_gs_fract = GSEA_GWAS(Uncorr_score_isan, Corr_score_isan, top_percen_cutoffs, num_gs_simul, find_gene_set_ind, score_signif_direct, choose_unique_genes, num_perm_limit)
-                end_time = time.time()
+                # end_time = time.time()
 
-                logger.log('It took {:.4f} seconds or {:.4f} minutes to run GSEA-GWAS for {}.\n', end_time-start_time, (end_time-start_time)/60, GeneSetLabel)
+                # logger.log('It took {:.4f} seconds or {:.4f} minutes to run GSEA-GWAS for {}.\n', end_time-start_time, (end_time-start_time)/60, GeneSetLabel)
 
                 final_num_simul, cut = record_rand_gs_fract.shape
                 Rand_gs_fract_p95[:final_num_simul, gs_ind] = record_rand_gs_fract[:, 0]
