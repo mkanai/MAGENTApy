@@ -11,12 +11,15 @@ python Run_MAGENTA.py
 ```
 
 ## Configuration
-Edit `config.yml`, or specify your own configuration by `--config myconfig.yml`.
+Edit `config.yml`, or specify your own configuration by `--config myconfig.yml`. All parameters are compatible with the original MAGENTA.
+
 
 ## Requirements
 - numpy
 - scipy
 - pandas
+- pyyaml
+- click (to be replaced)
 
 
 ## Copyright
