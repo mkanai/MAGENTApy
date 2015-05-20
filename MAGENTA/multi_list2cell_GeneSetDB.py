@@ -3,7 +3,7 @@ from utils import *
 
 
 def multi_list2cell_GeneSetDB(filename):
-    output_cellarray = np.zeros(BUFLINENUM, dtype=('a{},a{},{}i'.format(MAXIDLEN, MAXIDLEN, MAXGENESETNUM)))
+    output_cellarray = np.zeros(BUFLINENUM, dtype=('a{0},a{1},{2}i'.format(MAXIDLEN, MAXIDLEN, MAXGENESETNUM)))
     num_genes_per_gene_set = np.zeros(BUFLINENUM)
     geneset = np.tile(-1, MAXGENESETNUM)
     counter = 0

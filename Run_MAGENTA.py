@@ -86,24 +86,24 @@ def magenta(config):
     # % (0) PRINT INTO LOG FILE:
 
     # % make directory
-    Output_dir = 'Output_MAGENTA_{}_{}perm_{}'.format(exp_label, num_gs_simul, todays_date)
+    Output_dir = 'Output_MAGENTA_{0}_{1}perm_{2}'.format(exp_label, num_gs_simul, todays_date)
     if not os.path.exists(Output_dir):
         os.mkdir(Output_dir)
 
-    print('All output data is saved in the following directory: {}\n'.format(Output_dir))
-    GSEA_log_file_name = '{}/MAGENTA_run_{}_{}perm_{}.log'.format(Output_dir, exp_label, num_gs_simul, todays_date)
+    print('All output data is saved in the following directory: {0}\n'.format(Output_dir))
+    GSEA_log_file_name = '{0}/MAGENTA_run_{1}_{2}perm_{3}.log'.format(Output_dir, exp_label, num_gs_simul, todays_date)
     logger = Logger(GSEA_log_file_name)
-    logger.log('MAGENTA written by Ayellet Segre, Altshuler and Daly Labs, Date: {}\n\n', todays_date)
+    logger.log('MAGENTA written by Ayellet Segre, Altshuler and Daly Labs, Date: {0}\n\n', todays_date)
     logger.log('Summary file for running MAGENTA (Gene Set Enrichment Analysis (GSEA) on Genome-wide association study (GWAS) variant results).\n')
-    logger.log('Program run: {}\n', code_name)
-    logger.log('GWAS used: {}\n', exp_label)
-    logger.log('Number of randomly sampled gene sets for GSEA-GWAS p-value estimation is: {}\n', num_gs_simul)
-    logger.log('Gene boundaries used for mapping SNPs onto genes are: {}kb upstream to most extreme gene transcript start position, and {}kb downstream to most extreme gene transcript end position, taking gene orientation into account.\n', Gene_boundr_upstr / 1000, Gene_boundr_downstr / 1000)
+    logger.log('Program run: {0}\n', code_name)
+    logger.log('GWAS used: {0}\n', exp_label)
+    logger.log('Number of randomly sampled gene sets for GSEA-GWAS p-value estimation is: {0}\n', num_gs_simul)
+    logger.log('Gene boundaries used for mapping SNPs onto genes are: {0}kb upstream to most extreme gene transcript start position, and {1}kb downstream to most extreme gene transcript end position, taking gene orientation into account.\n', Gene_boundr_upstr / 1000, Gene_boundr_downstr / 1000)
 
     # (1) Open GSEA-GWAS results file
 
     if run_GSEA == 1:
-        GSEA_results_file_name = '{}/MAGENTA_pval_GeneSetEnrichAnalysis_{}_{}kb_upstr_{}kb_downstr_{}perm_{}.results'.format(Output_dir, exp_label, Gene_boundr_upstr / 1000, Gene_boundr_downstr / 1000, num_gs_simul, todays_date)
+        GSEA_results_file_name = '{0}/MAGENTA_pval_GeneSetEnrichAnalysis_{1}_{2}kb_upstr_{3}kb_downstr_{4}perm_{5}.results'.format(Output_dir, exp_label, Gene_boundr_upstr / 1000, Gene_boundr_downstr / 1000, num_gs_simul, todays_date)
         results = Writer(GSEA_results_file_name, bufsize=1)
 
         if GSEA_method == 1:
@@ -167,12 +167,12 @@ def magenta(config):
         Num_Indep_SNPs_per_gene = Calculate_NumIndepSNPsPerGene(AllGeneChrPos, PrunedSNPsChrPos, Gene_boundr_upstr, Gene_boundr_downstr)
         end_time = time.time()
 
-        logger.log('It took {:.4f} seconds or {:.4f} minutes to calculate number of independent SNPs per gene.\n', end_time-start_time, (end_time-start_time)/60)
+        logger.log('It took {0:.4f} seconds or {1:.4f} minutes to calculate number of independent SNPs per gene.\n', end_time-start_time, (end_time-start_time)/60)
 
         start_time = time.time()
         NumHotspots_per_gene = Calculate_NumHotspots_per_gene(AllGeneChrPos[:, :3], hotspot_boundaries, Gene_boundr_upstr, Gene_boundr_downstr, StrandOrient)
         end_time = time.time()
-        logger.log('It took {:.4f} seconds or {:.4f} minutes to calculate number of hotspots per gene.\n', end_time-start_time, (end_time-start_time)/60)
+        logger.log('It took {0:.4f} seconds or {1:.4f} minutes to calculate number of hotspots per gene.\n', end_time-start_time, (end_time-start_time)/60)
 
         confounders = np.vstack((GeneSize_plus_interval_in_kb,
                                  NumSNPs_per_gene/GeneSize_plus_interval_in_kb,
@@ -183,8 +183,8 @@ def magenta(config):
         RegressCorrGeneScores_pval, Residuals = GeneScoreRegressCorr(confounders, Uncorr_score[:, 2])
         Corr_score = RegressCorrGeneScores_pval
         end_time = time.time()
-        logger.log('It took {:.4f} seconds or {:.4f} minutes to correct gene scores with stepwise regression.\n', end_time-start_time, (end_time-start_time)/60)
-        np.savetxt('{}/RegressCorrGeneScores_pval_{}kb_upstr_{}kb_downstr_{}'.format(Output_dir, Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date), RegressCorrGeneScores_pval)
+        logger.log('It took {0:.4f} seconds or {1:.4f} minutes to correct gene scores with stepwise regression.\n', end_time-start_time, (end_time-start_time)/60)
+        np.savetxt('{0}/RegressCorrGeneScores_pval_{1}kb_upstr_{2}kb_downstr_{3}'.format(Output_dir, Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date), RegressCorrGeneScores_pval)
 
     elif GeneScoreMetric == 2:  # TO BE ADDED
         pass
@@ -232,17 +232,17 @@ def magenta(config):
     unique_resources = gs_GeneIDs_cellarray_min_gene_num[0][0]
 
     # (8) PRINT INTO LOG FILE:
-    logger.log('The input file name of gene sets analyzed is: {}\n', GeneSet_db_file_name)
-    logger.log('Number of gene sets with at least {} genes is {}.\n', min_gs_size, num_gene_sets_min_num_genes)
+    logger.log('The input file name of gene sets analyzed is: {0}\n', GeneSet_db_file_name)
+    logger.log('Number of gene sets with at least {0} genes is {1}.\n', min_gs_size, num_gene_sets_min_num_genes)
     logger.log('Gene sets were taken from the following resources:\n')
-    logger.log('{}\t', unique_resources)
+    logger.log('{0}\t', unique_resources)
     if print_gene_scores == 1:
         logger.log('Gene scores for the inputed set of gene-sets were printed into files with the suffix .geneset.\n')
     logger.log('\n')
 
     if run_GSEA == 1:
-        logger.log('The GSEA results file and other output files are saved in the directory: {}\n', Output_dir)
-        logger.log('The GSEA results file name is: {}\n', GSEA_results_file_name)
+        logger.log('The GSEA results file and other output files are saved in the directory: {0}\n', Output_dir)
+        logger.log('The GSEA results file name is: {0}\n', GSEA_results_file_name)
         logger.log('Here is a key of the header subtitles for each columns:\n')
         logger.log('DB=databse.\n')
         logger.log('GS=gene set.\n')
@@ -283,9 +283,9 @@ def magenta(config):
     first_db = gs_GeneIDs_cellarray_min_gene_num[0][0]
     gs_ind = 0
 
-    db_name = np.zeros(num_gene_sets_min_num_genes, dtype='a{}'.format(MAXIDLEN))
-    GeneSetLabel_array = np.zeros(num_gene_sets_min_num_genes, dtype="a{}".format(MAXIDLEN))
-    GeneSetGeneNames_cell_of_arrays = np.zeros(num_gene_sets_min_num_genes, dtype=",".join(["a{}".format(MAXIDLEN)] * MAXGENESETNUM))
+    db_name = np.zeros(num_gene_sets_min_num_genes, dtype='a{0}'.format(MAXIDLEN))
+    GeneSetLabel_array = np.zeros(num_gene_sets_min_num_genes, dtype="a{0}".format(MAXIDLEN))
+    GeneSetGeneNames_cell_of_arrays = np.zeros(num_gene_sets_min_num_genes, dtype=",".join(["a{0}".format(MAXIDLEN)] * MAXGENESETNUM))
     Original_gs_size = np.zeros(num_gene_sets_min_num_genes)
     Num_genes_no_match_list = np.zeros(num_gene_sets_min_num_genes)
     num_genes_gs_wo_score = np.zeros(num_gene_sets_min_num_genes)
@@ -377,7 +377,7 @@ def magenta(config):
         # (9.6) Print gene scores for each gene set
 
         if print_gene_scores == 1:
-            output_genescore_file_name = '{}/GeneAssocScores_{}_{}_{}kb_upstr_{}kb_downstr_{}.geneset'.format(Output_dir, exp_label, GeneSetLabel, Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date)
+            output_genescore_file_name = '{0}/GeneAssocScores_{1}_{2}_{3}kb_upstr_{4}kb_downstr_{5}.geneset'.format(Output_dir, exp_label, GeneSetLabel, Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date)
             geneset = Writer(output_genescore_file_name)
 
             geneset.write('Database\tGene_Set\tGene_Symbol\tEntrez_ID\tGene_p-value\tGene_Chr_Num\tGene_Start_Pos\tGene_End_Pos\tGene_Size_kb\tNum_SNPs_per_Gene\tNum_Indep_HapMap_SNPs_per_Gene\tNum_RecombHotspots_per_Gene\t')
@@ -405,28 +405,28 @@ def magenta(config):
                     geneset.write('\t'.join((db_name[gs_ind],
                                              GeneSetLabel_array[gs_ind],
                                              AllRefFlatGeneNames[find_gene_a],
-                                             "{}".format(AllRefFlatGeneID[find_gene_a]),
-                                             "NaN" if np.isnan(Corr_score[find_gene_a]) else "{:E}".format(Corr_score[find_gene_a]),
+                                             "{0}".format(AllRefFlatGeneID[find_gene_a]),
+                                             "NaN" if np.isnan(Corr_score[find_gene_a]) else "{0:E}".format(Corr_score[find_gene_a]),
                                              '\t'.join(map(lambda x: str(x), AllGeneChrPos[find_gene_a, :3])),
-                                             "{:1.0f}".format(round(AllGeneSizes[find_gene_a] / 1000.0, 0)),
-                                             "{}".format(NumSNPs_per_gene[find_gene_a]),
-                                             "{}".format(Num_Indep_SNPs_per_gene[find_gene_a]),
-                                             "{}".format(NumHotspots_per_gene[find_gene_a]))) + '\t')
+                                             "{0:1.0f}".format(round(AllGeneSizes[find_gene_a] / 1000.0, 0)),
+                                             "{0}".format(NumSNPs_per_gene[find_gene_a]),
+                                             "{0}".format(Num_Indep_SNPs_per_gene[find_gene_a]),
+                                             "{0}".format(NumHotspots_per_gene[find_gene_a]))) + '\t')
 
                     if SNP_rs_num_file_name and print_rs_num == 1 and calculate_Scores_confounders == 1:
-                        geneset.write('{}\t'.format(Best_SNP_rs[find_gene_a]))
+                        geneset.write('{0}\t'.format(Best_SNP_rs[find_gene_a]))
 
-                    geneset.write(format_NaN('{:1.0f}\t', Uncorr_score[find_gene_a, 0]))
-                    geneset.write(format_NaN('{:1.0f}\t', Uncorr_score[find_gene_a, 1]))
-                    geneset.write(format_NaN('{:5.4f}\t', Uncorr_score[find_gene_a, 2]))
-                    geneset.write(format_NaN('{:E}\t', Uncorr_score[find_gene_a, 3]))
+                    geneset.write(format_NaN('{0:1.0f}\t', Uncorr_score[find_gene_a, 0]))
+                    geneset.write(format_NaN('{0:1.0f}\t', Uncorr_score[find_gene_a, 1]))
+                    geneset.write(format_NaN('{0:5.4f}\t', Uncorr_score[find_gene_a, 2]))
+                    geneset.write(format_NaN('{0:E}\t', Uncorr_score[find_gene_a, 3]))
 
                     if print_best_SNP_OR == 1:
                         num_row_OR, num_col_OR = GWAS_SNP_OR_L95_U95.shape
                         if np.logical_not(np.isnan(Best_SNP_rs[find_gene_a])):
                             find_best_SNP_rs = np.where(np.equal(AllSNP_rs_num, Best_SNP_rs[find_gene_a]))[0]
                             for odds in range(num_col_OR):
-                                geneset.write(format_NaN('{:5.4f}\t', GWAS_SNP_OR_L95_U95[find_best_SNP_rs, odds]))
+                                geneset.write(format_NaN('{0:5.4f}\t', GWAS_SNP_OR_L95_U95[find_best_SNP_rs, odds]))
                         else:
                             geneset.write('\t'.join(("NaN") * num_col_OR) + '\t')
 
@@ -523,29 +523,29 @@ def magenta(config):
 
                         results.write('\t'.join((db_name[each_gs],
                                                  GeneSetLabel_array[each_gs],
-                                                 "{:1.0f}".format(Original_gs_size[each_gs]),
-                                                 "{:1.0f}".format(Eff_num_genes_gs[each_gs]),
-                                                 "{:1.0f}".format(Num_genes_no_match_list[each_gs]),
-                                                 "{:1.0f}".format(num_genes_gs_wo_score[each_gs]),
-                                                 "{:1.0f}".format(num_genes_removed_overlap[each_gs]),
-                                                 "{:1.0f}".format(Med_genesize_gs[each_gs]),
-                                                 "{:1.0f}".format(Mean_genesize_gs[each_gs]))))
+                                                 "{0:1.0f}".format(Original_gs_size[each_gs]),
+                                                 "{0:1.0f}".format(Eff_num_genes_gs[each_gs]),
+                                                 "{0:1.0f}".format(Num_genes_no_match_list[each_gs]),
+                                                 "{0:1.0f}".format(num_genes_gs_wo_score[each_gs]),
+                                                 "{0:1.0f}".format(num_genes_removed_overlap[each_gs]),
+                                                 "{0:1.0f}".format(Med_genesize_gs[each_gs]),
+                                                 "{0:1.0f}".format(Mean_genesize_gs[each_gs]))))
 
                         if len(EnrichPval_multipleCutoffs):
                             if GSEA_method == 1:
                                 results.write('\t' +
-                                              '\t'.join(('{:E}'.format(EnrichPval_multipleCutoffs_all_genesets[each_gs, 0]),
-                                                         format_NaN('{:E}', FDR_gs_p95[each_gs], sep=''),
-                                                         '{:1.0f}'.format(round(top_percen_cutoffs[0] / 100.0 * Eff_num_genes_gs[each_gs])),
-                                                         '{:1.0f}'.format(obs_num_gs_above_cutoff_p95[each_gs]),
-                                                         '{:E}'.format(EnrichPval_multipleCutoffs_all_genesets[each_gs, 1]),
-                                                         format_NaN('{:E}', FDR_gs_p75[each_gs], sep=''),
-                                                         '{:1.0f}'.format(round(top_percen_cutoffs[0] / 100.0 * Eff_num_genes_gs[each_gs])),
-                                                         '{:1.0f}'.format(obs_num_gs_above_cutoff_p75[each_gs]))))
+                                              '\t'.join(('{0:E}'.format(EnrichPval_multipleCutoffs_all_genesets[each_gs, 0]),
+                                                         format_NaN('{0:E}', FDR_gs_p95[each_gs], sep=''),
+                                                         '{0:1.0f}'.format(round(top_percen_cutoffs[0] / 100.0 * Eff_num_genes_gs[each_gs])),
+                                                         '{0:1.0f}'.format(obs_num_gs_above_cutoff_p95[each_gs]),
+                                                         '{0:E}'.format(EnrichPval_multipleCutoffs_all_genesets[each_gs, 1]),
+                                                         format_NaN('{0:E}', FDR_gs_p75[each_gs], sep=''),
+                                                         '{0:1.0f}'.format(round(top_percen_cutoffs[0] / 100.0 * Eff_num_genes_gs[each_gs])),
+                                                         '{0:1.0f}'.format(obs_num_gs_above_cutoff_p75[each_gs]))))
                             elif GSEA_method == 4:
-                                results.write('\t{:E}', EnrichPval_multipleCutoffs_all_genesets[each_gs, 0])
+                                results.write('\t{0:E}', EnrichPval_multipleCutoffs_all_genesets[each_gs, 0])
 
-                        results.write('\t{:1.0f}', Presence_flag_gs_genes[each_gs])
+                        results.write('\t{0:1.0f}', Presence_flag_gs_genes[each_gs])
 
                         if Flag_gene_set_file_name and Flag_gs == 1 and print_trait_gene_names_in_gs == 1:
                             Flagged_GeneNames_in_GeneSet = np.interest1d(GeneSetGeneNames_cell_of_arrays[each_gs], Flag_gs_GeneNames)
@@ -555,7 +555,7 @@ def magenta(config):
                                     find_flag_gene_name = np.where(np.in1d(AllRefFlatGeneID, Flagged_GeneNames_in_GeneSet[u]))[0]
                                     if np.sum(find_flag_gene_name):
                                         Flag_gene_name = AllRefFlatGeneNames[find_flag_gene_name[0]]
-                                        results.write("{},", Flag_gene_name)
+                                        results.write("{0},", Flag_gene_name)
 
                                 find_flag_gene_name = np.where(np.in1d(AllRefFlatGeneID, Flagged_GeneNames_in_GeneSet[len(Flagged_GeneNames_in_GeneSet)]))[0]
                                 if np.sum(find_flag_gene_name):
@@ -569,25 +569,25 @@ def magenta(config):
                 # (9.8) Print Gene Set Enrichment results for each gene set into output file
                 results.write('\t'.join((db_name[each_gs],
                                          GeneSetLabel_array[each_gs],
-                                         "{:1.0f}".format(Original_gs_size[each_gs]),
-                                         "{:1.0f}".format(Eff_num_genes_gs[each_gs]),
-                                         "{:1.0f}".format(Num_genes_no_match_list[each_gs]),
-                                         "{:1.0f}".format(num_genes_gs_wo_score[each_gs]),
-                                         "{:1.0f}".format(num_genes_removed_overlap[each_gs]),
-                                         "{:1.0f}".format(Med_genesize_gs[each_gs]),
-                                         "{:1.0f}".format(Mean_genesize_gs[each_gs]))))
+                                         "{0:1.0f}".format(Original_gs_size[each_gs]),
+                                         "{0:1.0f}".format(Eff_num_genes_gs[each_gs]),
+                                         "{0:1.0f}".format(Num_genes_no_match_list[each_gs]),
+                                         "{0:1.0f}".format(num_genes_gs_wo_score[each_gs]),
+                                         "{0:1.0f}".format(num_genes_removed_overlap[each_gs]),
+                                         "{0:1.0f}".format(Med_genesize_gs[each_gs]),
+                                         "{0:1.0f}".format(Mean_genesize_gs[each_gs]))))
 
                 if len(EnrichPval_multipleCutoffs):
                     if GSEA_method == 1:
                         for y in range(len(EnrichPval_multipleCutoffs)):
                             results.write('\t' +
-                                          '\t'.join(('{:E}'.format(EnrichPval_multipleCutoffs[y]),
-                                                     '{:1.0f}'.format(round(top_percen_cutoffs[y] / 100.0 * Eff_num_genes_gs[gs_ind])),
-                                                     '{:1.0f}'.format(obs_num_gs_above_cutoff[y]))))
+                                          '\t'.join(('{0:E}'.format(EnrichPval_multipleCutoffs[y]),
+                                                     '{0:1.0f}'.format(round(top_percen_cutoffs[y] / 100.0 * Eff_num_genes_gs[gs_ind])),
+                                                     '{0:1.0f}'.format(obs_num_gs_above_cutoff[y]))))
                     elif GSEA_method == 4:
-                        results.write('\t{:E}', EnrichPval_multipleCutoffs[0])
+                        results.write('\t{0:E}', EnrichPval_multipleCutoffs[0])
 
-                results.write('\t{:1.0f}', Presence_flag_gs_genes[gs_ind])
+                results.write('\t{0:1.0f}', Presence_flag_gs_genes[gs_ind])
 
                 if Flag_gene_set_file_name and Flag_gs == 1 and print_trait_gene_names_in_gs == 1:
                     Flagged_GeneNames_in_GeneSet = np.interest1d(GeneSetGeneNames_cell_of_arrays[gs_ind], Flag_gs_GeneNames)
@@ -597,7 +597,7 @@ def magenta(config):
                             find_flag_gene_name = np.where(np.in1d(AllRefFlatGeneID, Flagged_GeneNames_in_GeneSet[u]))[0]
                             if np.sum(find_flag_gene_name):
                                 Flag_gene_name = AllRefFlatGeneNames[find_flag_gene_name[0]]
-                                results.write("{},", Flag_gene_name)
+                                results.write("{0},", Flag_gene_name)
 
                         find_flag_gene_name = np.where(np.in1d(AllRefFlatGeneID, Flagged_GeneNames_in_GeneSet[len(Flagged_GeneNames_in_GeneSet)]))[0]
                         if np.sum(find_flag_gene_name):
@@ -611,7 +611,7 @@ def magenta(config):
         pass
 
     run_time = time.time() - analysis_start_time
-    logger.log("Time it took the program to run: {} minutes = {} hours = {} days\n", run_time / 60, run_time / 3600, run_time / (3600 * 24))
+    logger.log("Time it took the program to run: {0} minutes = {1} hours = {2} days\n", run_time / 60, run_time / 3600, run_time / (3600 * 24))
 
 if __name__ == '__main__':
     magenta()

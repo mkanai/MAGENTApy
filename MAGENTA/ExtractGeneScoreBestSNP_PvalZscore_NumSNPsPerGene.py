@@ -5,7 +5,7 @@ from utils import *
 def ExtractGeneScoreBestSNP_PvalZscore_NumSNPsPerGene(GeneSubsetChrPos, All_SNP_scores_pos, interval_up, interval_down, strand, best_pval_or_z, SNP_rs):
     num_genes, c = GeneSubsetChrPos.shape
     Scores_X = np.zeros((num_genes, 4))
-    Best_SNP_rs = np.zeros(num_genes, dtype="a{}".format(MAXIDLEN))
+    Best_SNP_rs = np.zeros(num_genes, dtype="a{0}".format(MAXIDLEN))
     num_SNPs_per_gene = np.zeros(num_genes, dtype="i")
     count_num_Genes_NaN_scores = 0
 
@@ -73,5 +73,5 @@ def ExtractGeneScoreBestSNP_PvalZscore_NumSNPsPerGene(GeneSubsetChrPos, All_SNP_
             Scores_X[gene, :] = np.tile(np.nan, 4)
             Best_SNP_rs[gene] = ''
 
-    print('There are {:d} genes with SNPs in their target region that were not assigned an association score (NaN).\n'.format(count_num_Genes_NaN_scores))
+    print('There are {0:d} genes with SNPs in their target region that were not assigned an association score (NaN).\n'.format(count_num_Genes_NaN_scores))
     return (Scores_X, num_SNPs_per_gene, Best_SNP_rs)
