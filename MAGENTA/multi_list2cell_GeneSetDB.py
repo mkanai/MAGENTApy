@@ -3,17 +3,17 @@ from utils import *
 
 
 def multi_list2cell_GeneSetDB(filename):
-    output_cellarray = np.zeros(BUFLINENUM, dtype=('a{0},a{1},{2}i'.format(MAXIDLEN, MAXIDLEN, MAXGENESETNUM)))
+    output_cellarray = np.zeros(BUFLINENUM, dtype=('a{0},a{1},{2}i'.format(MAXIDLEN, MAXIDLEN, MAXGENENUM_PER_GENESET)))
     num_genes_per_gene_set = np.zeros(BUFLINENUM)
-    geneset = np.tile(-1, MAXGENESETNUM)
+    geneset = np.tile(-1, MAXGENENUM_PER_GENESET)
     counter = 0
     with open(filename, "r") as reader:
         for line in reader:
             tokens = line.strip('\n').split('\t')
             ntokens = len(tokens)
             num_genes_per_gene_set[counter] = ntokens - 2
-            if num_genes_per_gene_set[counter] > MAXGENESETNUM:
-                print num_genes_per_gene_set[counter]
+            if num_genes_per_gene_set[counter] > MAXGENENUM_PER_GENESET:
+                raise ValueError('A number of genes in ({0}, {1}): {2} exceeds MAXGENENUM_PER_GENESET. Try increase it.'.format(tokens[0], tokens[1], num_genes_per_gene_set[counter]))
             geneset[:num_genes_per_gene_set[counter]] = map(lambda x: int(x), tokens[2:])
             output_cellarray[counter] = (tokens[0], tokens[1], geneset)
             counter += 1

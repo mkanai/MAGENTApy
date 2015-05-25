@@ -1,10 +1,12 @@
 import functools
 import numpy as np
+import os
+import re
 import sys
 
 BUFLINENUM = 65536
-MAXIDLEN = 128
-MAXGENESETNUM = 256
+MAXIDLEN = 256
+MAXGENENUM_PER_GENESET =16384
 
 
 class Writer(object):
@@ -36,6 +38,10 @@ def logical_or(*args):
 
 def format_NaN(format_string, value, sep='\t'):
     return 'NaN' + sep if np.isnan(value) else format_string.format(value)
+
+
+def get_valid_filename(filename, dir=''):
+    return os.path.join(dir, filename.replace('/', '_'))
 
 
 def inHLAregion(HumanGeneChrPos, st, en):

@@ -86,7 +86,7 @@ def magenta(config):
     # % (0) PRINT INTO LOG FILE:
 
     # % make directory
-    Output_dir = 'Output_MAGENTA_{0}_{1}perm_{2}'.format(exp_label, num_gs_simul, todays_date)
+    Output_dir = get_valid_filename('Output_MAGENTA_{0}_{1}perm_{2}'.format(exp_label, num_gs_simul, todays_date))
     if not os.path.exists(Output_dir):
         os.mkdir(Output_dir)
 
@@ -103,7 +103,7 @@ def magenta(config):
     # (1) Open GSEA-GWAS results file
 
     if run_GSEA == 1:
-        GSEA_results_file_name = '{0}/MAGENTA_pval_GeneSetEnrichAnalysis_{1}_{2}kb_upstr_{3}kb_downstr_{4}perm_{5}.results'.format(Output_dir, exp_label, Gene_boundr_upstr / 1000, Gene_boundr_downstr / 1000, num_gs_simul, todays_date)
+        GSEA_results_file_name = get_valid_filename('MAGENTA_pval_GeneSetEnrichAnalysis_{0}_{1}kb_upstr_{2}kb_downstr_{3}perm_{4}.results'.format(exp_label, Gene_boundr_upstr / 1000, Gene_boundr_downstr / 1000, num_gs_simul, todays_date), Output_dir)
         results = Writer(GSEA_results_file_name, bufsize=1)
 
         if GSEA_method == 1:
@@ -184,10 +184,10 @@ def magenta(config):
         Corr_score = RegressCorrGeneScores_pval
         end_time = time.time()
         logger.log('It took {0:.4f} seconds or {1:.4f} minutes to correct gene scores with stepwise regression.\n', end_time-start_time, (end_time-start_time)/60)
-        np.savetxt('{0}/RegressCorrGeneScores_pval_{1}kb_upstr_{2}kb_downstr_{3}'.format(Output_dir, Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date), RegressCorrGeneScores_pval)
+        np.savetxt(get_valid_filename('RegressCorrGeneScores_pval_{0}kb_upstr_{1}kb_downstr_{2}'.format(Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date), Output_dir), RegressCorrGeneScores_pval)
 
     elif GeneScoreMetric == 2:  # TO BE ADDED
-        pass
+        raise NotImplementedError("TO BE IMPLEMENTED.")
         # SetScore = [];
         # Corr_score = SetScore(find_corr_score_isan);
 
@@ -285,7 +285,7 @@ def magenta(config):
 
     db_name = np.zeros(num_gene_sets_min_num_genes, dtype='a{0}'.format(MAXIDLEN))
     GeneSetLabel_array = np.zeros(num_gene_sets_min_num_genes, dtype="a{0}".format(MAXIDLEN))
-    GeneSetGeneNames_cell_of_arrays = np.zeros(num_gene_sets_min_num_genes, dtype=",".join(["a{0}".format(MAXIDLEN)] * MAXGENESETNUM))
+    GeneSetGeneNames_cell_of_arrays = np.zeros(num_gene_sets_min_num_genes, dtype=",".join(["a{0}".format(MAXIDLEN)] * MAXGENENUM_PER_GENESET))
     Original_gs_size = np.zeros(num_gene_sets_min_num_genes)
     Num_genes_no_match_list = np.zeros(num_gene_sets_min_num_genes)
     num_genes_gs_wo_score = np.zeros(num_gene_sets_min_num_genes)
@@ -377,7 +377,7 @@ def magenta(config):
         # (9.6) Print gene scores for each gene set
 
         if print_gene_scores == 1:
-            output_genescore_file_name = '{0}/GeneAssocScores_{1}_{2}_{3}kb_upstr_{4}kb_downstr_{5}.geneset'.format(Output_dir, exp_label, GeneSetLabel, Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date)
+            output_genescore_file_name = get_valid_filename('GeneAssocScores_{0}_{1}_{2}kb_upstr_{3}kb_downstr_{4}.geneset'.format(exp_label, GeneSetLabel, Gene_boundr_upstr/1000, Gene_boundr_downstr/1000, todays_date), Output_dir)
             geneset = Writer(output_genescore_file_name)
 
             geneset.write('Database\tGene_Set\tGene_Symbol\tEntrez_ID\tGene_p-value\tGene_Chr_Num\tGene_Start_Pos\tGene_End_Pos\tGene_Size_kb\tNum_SNPs_per_Gene\tNum_Indep_HapMap_SNPs_per_Gene\tNum_RecombHotspots_per_Gene\t')

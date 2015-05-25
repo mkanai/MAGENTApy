@@ -14,7 +14,6 @@ def GeneScoreRegressCorr(confounders, GeneScores):
         if pval[j] <= cutoff:
             Residuals = Residuals - beta[j]*confounders[:, j]
 
-    print(beta)
     find_residuals_isan = np.logical_and(np.logical_not(np.isnan(Residuals)), np.isfinite(Residuals))
     RegressCorrGeneScores_pval = 1 - sp.stats.norm.cdf(Residuals, np.mean(Residuals[find_residuals_isan]), np.std(Residuals[find_residuals_isan]))
     return (RegressCorrGeneScores_pval, Residuals)

@@ -62,9 +62,10 @@ def GSEA_GWAS(Uncorr_score, Corr_score, top_percen_cutoffs, num_rounds, find_gen
                     # Updated_gene_ind = np.union1d(Saved_gene_ind, rand_geneset_ind_add)
                     # Updated_gene_ind = np.concatenate((Saved_gene_ind, rand_geneset_ind_add))
                     Updated_gene_ind[:saved_gene_size] = Saved_gene_ind
-                    Updated_gene_ind[saved_gene_size:] = rand_geneset_ind_add
+                    Updated_gene_ind[saved_gene_size:saved_gene_size+len(rand_geneset_ind_add)] = rand_geneset_ind_add
+                    saved_gene_size += len(rand_geneset_ind_add)
                     # temp = Sorted_all_uncorr_SNP_Chrpos[Updated_gene_ind, 0] * 1e11 + Sorted_all_uncorr_SNP_Chrpos[Updated_gene_ind, 1]
-                    temp = Sorted_all_uncorr_SNP_Chrpos[Updated_gene_ind]
+                    temp = Sorted_all_uncorr_SNP_Chrpos[Updated_gene_ind[:saved_gene_size]]
                     _, Unique_genes_ind = np.unique(temp, return_index=True)
                     Saved_gene_ind = Updated_gene_ind[Unique_genes_ind]
                     saved_gene_size = len(Saved_gene_ind)
