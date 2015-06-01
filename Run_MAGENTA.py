@@ -362,11 +362,13 @@ def magenta(config):
 
         GS_genesize_vect = AllGeneSizes_isan[find_gene_set_ind]
 
-        Med_genesize_gs[gs_ind] = np.median(GS_genesize_vect[np.logical_not(np.isnan(GS_genesize_vect))]) / 1000.0
-        Mean_genesize_gs[gs_ind] = np.mean(GS_genesize_vect[np.logical_not(np.isnan(GS_genesize_vect))]) / 1000.0
+        find_gs_genesize_isan = np.logical_not(np.isnan(GS_genesize_vect))
+        if np.sum(find_gs_genesize_isan):
+            Med_genesize_gs[gs_ind] = np.median(GS_genesize_vect[find_gs_genesize_isan]) / 1000.0
+            Mean_genesize_gs[gs_ind] = np.mean(GS_genesize_vect[find_gs_genesize_isan]) / 1000.0
 
-        Num_LargeGenes_gs[gs_ind] = len(np.greater_equal(GS_genesize_vect, 100000))
-        Num_SmallGenes_gs[gs_ind] = len(np.less_equal(GS_genesize_vect, 10000))
+        Num_LargeGenes_gs[gs_ind] = np.sum(np.greater_equal(GS_genesize_vect, 100000))
+        Num_SmallGenes_gs[gs_ind] = np.sum(np.less_equal(GS_genesize_vect, 10000))
 
         # (9.5) Record presence of genes from input subset of genes in given gene set (e.g. known disease genes)
 
