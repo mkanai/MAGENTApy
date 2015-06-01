@@ -9,12 +9,12 @@ def multi_list2cell_GeneSetDB(filename):
     counter = 0
     with open(filename, "r") as reader:
         for line in reader:
-            tokens = line.strip('\n').split('\t')
-            ntokens = len(tokens)
-            num_genes_per_gene_set[counter] = ntokens - 2
+            tokens = np.array(line.strip('\n').split('\t'))
+            genes = np.unique(tokens[2:])
+            num_genes_per_gene_set[counter] = len(genes) 
             if num_genes_per_gene_set[counter] > MAXGENENUM_PER_GENESET:
                 raise ValueError('A number of genes in ({0}, {1}): {2} exceeds MAXGENENUM_PER_GENESET. Try increase it.'.format(tokens[0], tokens[1], num_genes_per_gene_set[counter]))
-            geneset[:num_genes_per_gene_set[counter]] = map(lambda x: int(x), tokens[2:])
+            geneset[:num_genes_per_gene_set[counter]] = map(lambda x: int(x), genes)
             output_cellarray[counter] = (tokens[0], tokens[1], geneset)
             counter += 1
             geneset.fill(-1)
