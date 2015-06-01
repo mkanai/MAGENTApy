@@ -148,3 +148,6 @@ print_best_SNP_OR: 0
 
 # Enter 1 to calculate a false discovery rate; enter 0 not to calculate FDR
 calculate_FDR: 1
+
+# Enter a seed number for random generator; default value is the computer time. only accepts numbers except for "time".
+seed: time

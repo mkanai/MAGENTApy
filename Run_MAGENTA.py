@@ -53,6 +53,11 @@ def magenta(config):
     print_rs_num = config['print_rs_num']
     print_best_SNP_OR = config['print_best_SNP_OR']
     calculate_FDR = config['calculate_FDR']
+    seed = config['seed']
+    if seed == "time" or seed is None:
+        seed = time.time()
+    seed = int(seed)
+    np.random.seed(seed)
 
     analysis_start_time = time.time()
     if Genome_build == 'NCBI36':
@@ -97,6 +102,7 @@ def magenta(config):
     logger.log('Summary file for running MAGENTA (Gene Set Enrichment Analysis (GSEA) on Genome-wide association study (GWAS) variant results).\n')
     logger.log('Program run: {0}\n', code_name)
     logger.log('GWAS used: {0}\n', exp_label)
+    logger.log('Random seed: {0:d}\n', seed)
     logger.log('Number of randomly sampled gene sets for GSEA-GWAS p-value estimation is: {0}\n', num_gs_simul)
     logger.log('Gene boundaries used for mapping SNPs onto genes are: {0}kb upstream to most extreme gene transcript start position, and {1}kb downstream to most extreme gene transcript end position, taking gene orientation into account.\n', Gene_boundr_upstr / 1000, Gene_boundr_downstr / 1000)
 
