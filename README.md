@@ -1,5 +1,5 @@
 # MAGENTApy
-Experimental re-implementaion of MAGENTA software. https://www.broadinstitute.org/mpg/magenta/
+Experimental port of MAGENTA software to Python. https://www.broadinstitute.org/mpg/magenta/
 
 **Not fully tested yet!**
 
