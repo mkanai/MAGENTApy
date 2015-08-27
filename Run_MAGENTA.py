@@ -132,6 +132,8 @@ def magenta(config):
 
     # % (3.1) Read in GWA SNP z-scores and p-values after genomic control
     GWAS_SNP_ChrNumPosZscoresPval = pd.read_csv(GWAS_SNP_score_file_name, header=None, delim_whitespace=True).values
+    find_GWAS_SNP_ChrNumPosZscoresPval_isan = np.logical_not(np.isnan(GWAS_SNP_ChrNumPosZscoresPval[:, 2]))
+    GWAS_SNP_ChrNumPosZscoresPval = GWAS_SNP_ChrNumPosZscoresPval[find_GWAS_SNP_ChrNumPosZscoresPval_isan]
     n_r, n_c = GWAS_SNP_ChrNumPosZscoresPval.shape
 
     if n_c < 4 and np.max(GWAS_SNP_ChrNumPosZscoresPval[:, 2]) <= 1:
@@ -142,6 +144,7 @@ def magenta(config):
     if print_best_SNP_OR == 1:
         if GWAS_OR_filename:
             GWAS_SNP_OR_L95_U95 = pd.read_csv(GWAS_OR_filename, header=None, delim_whitespace=True).values
+            GWAS_SNP_OR_L95_U95 = GWAS_SNP_OR_L95_U95[find_GWAS_SNP_ChrNumPosZscoresPval_isan]
 
     if Input_file_SNPpval_only == 1:
         GWAS_SNPChrNumPos_ZscoresCalculatedFromPval = Converting_GWAS_TwoTailedPval_to_Zscores(GWAS_SNP_ChrNumPosZscoresPval)
@@ -152,6 +155,7 @@ def magenta(config):
 
     if SNP_rs_num_file_name and print_rs_num == 1:
         AllSNP_rs_num = pd.read_csv(SNP_rs_num_file_name, header=None).values
+        AllSNP_rs_num = AllSNP_rs_num[find_GWAS_SNP_ChrNumPosZscoresPval_isan]
     else:
         AllSNP_rs_num = np.zeros(len(GWAS_SNP_ChrNumPosZscoresPval), dtype="str")
 
