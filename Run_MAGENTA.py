@@ -559,7 +559,7 @@ def magenta(config):
                         results.write('\t{0:1.0f}', Presence_flag_gs_genes[each_gs])
 
                         if Flag_gene_set_file_name and Flag_gs == 1 and print_trait_gene_names_in_gs == 1:
-                            Flagged_GeneNames_in_GeneSet = np.interest1d(GeneSetGeneNames_cell_of_arrays[each_gs], Flag_gs_GeneNames)
+                            Flagged_GeneNames_in_GeneSet = np.intersect1d(GeneSetGeneNames_cell_of_arrays[each_gs], Flag_gs_GeneNames)
                             if len(Flagged_GeneNames_in_GeneSet):
                                 results.write('\t')
                                 for u in range(len(Flagged_GeneNames_in_GeneSet) - 1):
