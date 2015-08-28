@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import numpy as np
 import pandas as pd
@@ -207,18 +207,17 @@ def magenta(config):
     find_corr_score_isan = np.logical_and(np.logical_not(np.isnan(Corr_score)), np.logical_not(np.isnan(Uncorr_score[:, 2])))
     AllGene_Names_score_isan = AllGene_Names[find_corr_score_isan]
 
-    if Flag_gene_set_file_name:
-        if Remove_gs == 1:
-            if match_genes_GeneID == 1:
-                Flag_gs_GeneNames = pd.read_csv(Flag_gene_set_file_name, header=None, delim_whitespace=True).values
-            else:
-                Flag_gs_GeneNames = pd.read_csv(Flag_gene_set_file_name, header=None, delim_whitespace=True).values  # well, there should be some difference, though
+    if Flag_gene_set_file_name and Remove_gs == 1:
+        if match_genes_GeneID == 1:
+            Flag_gs_GeneNames = pd.read_csv(Flag_gene_set_file_name, header=None, delim_whitespace=True).values
+        else:
+            Flag_gs_GeneNames = pd.read_csv(Flag_gene_set_file_name, header=None, delim_whitespace=True).values  # well, there should be some difference, though
 
-            Flag_gs_GeneNames = np.unique(Flag_gs_GeneNames)
+        Flag_gs_GeneNames = np.unique(Flag_gs_GeneNames)
 
-            AllGenes_wo_flag_gs_ind = np.where(np.logical_not(np.in1d(AllGene_Names, Flag_gs_GeneNames)))[0]
-            find_score_isan_not_flag_gs_unsorted = np.intersect1d(AllGenes_wo_flag_gs_ind, np.where(find_corr_score_isan))
-            find_score_isan_not_flag_gs = np.sort(find_score_isan_not_flag_gs_unsorted)
+        AllGenes_wo_flag_gs_ind = np.where(np.logical_not(np.in1d(AllGene_Names, Flag_gs_GeneNames)))[0]
+        find_score_isan_not_flag_gs_unsorted = np.intersect1d(AllGenes_wo_flag_gs_ind, np.where(find_corr_score_isan))
+        find_score_isan_not_flag_gs = np.sort(find_score_isan_not_flag_gs_unsorted)
     else:
         find_score_isan_not_flag_gs = find_corr_score_isan
 
