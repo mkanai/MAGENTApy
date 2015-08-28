@@ -3,6 +3,8 @@ Experimental port of MAGENTA software to Python. https://www.broadinstitute.org/
 
 **Not fully tested yet!**
 
+Note: For maintainability, this script is **intentionally un-pythonic**, following the original code structure of MAGENTA written in MATLAB.
+
 ## Usage
 ```{shell}
 git clone https://github.com/mkanai/MAGENTApy.git
