@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-import click
+import argparse
 import datetime
 import time
 import os
@@ -19,10 +19,25 @@ from MAGENTA.multi_list2cell_GeneSetDB import *
 from MAGENTA.GSEA_GWAS import *
 
 
-@click.command()
-@click.option('--config', default="config.yml", help='Configuration file.')
-def magenta(config):
-    with open(config, 'r') as f:
+__version__ = '0.2'
+
+BASEDIR = os.path.dirname(__file__)
+
+GENE_FILEPATH = {'NCBI36' : os.path.join(BASEDIR, 'AllHumanGeneChrPosStrand_18434Genes_RefFlat_111909'),
+                 'NCBI37' : os.path.join(BASEDIR, 'AllHumanGeneChrPosStrand_RefSeq_hg19_072111')}
+
+GENE_NAME_FILEPATH = {'NCBI36' : os.path.join(BASEDIR, 'RefFlatGeneSymbolGeneID_18434Genes_111909'),
+                      'NCBI37' : os.path.join(BASEDIR, 'AllHumanGeneNames_RefSeq_hg19_072111')}
+
+HOTSPOT_BOUNDARIES_FILEPATH = {'NCBI36' : os.path.join(BASEDIR, 'hotspot_boundaries_b36'),
+                               'NCBI37' : os.path.join(BASEDIR, 'hotspot_boundaries_b37_hg19_072111')}
+
+PRUNED_SNPS_FILEPATH = {'NCBI36' : os.path.join(BASEDIR, 'CEUPruned_SNP_ChrNumPos_hg18_030811'),
+                        'NCBI37' : os.path.join(BASEDIR, 'CEU_HapMap_pruned_SNPs_ChrNumPos_hg19_072111')}
+
+
+def magenta(args):
+    with open(args.config, 'r') as f:
         config = yaml.load(f)
 
     GWAS_SNP_score_file_name = config['GWAS_SNP_score_file_name']
@@ -53,6 +68,9 @@ def magenta(config):
     print_rs_num = config['print_rs_num']
     print_best_SNP_OR = config['print_best_SNP_OR']
     calculate_FDR = config['calculate_FDR']
+    calculate_Scores_confounders = config['calculate_Scores_confounders']
+    GeneScoreMetric = config['GeneScoreMetric']
+    score_signif_direct = config['score_signif_direct']
     seed = config['seed']
     if seed == "time" or seed is None:
         seed = time.time()
@@ -60,24 +78,14 @@ def magenta(config):
     np.random.seed(seed)
 
     analysis_start_time = time.time()
-    if Genome_build == 'NCBI36':
-        HumanGeneChrPos = pd.read_csv('AllHumanGeneChrPosStrand_18434Genes_RefFlat_111909', header=None, delim_whitespace=True)
-        hotspot_boundaries = pd.read_csv('hotspot_boundaries_b36', header=None, delim_whitespace=True)
-        PrunedSNPsChrPos = pd.read_csv('CEUPruned_SNP_ChrNumPos_hg18_030811', header=None, delim_whitespace=True).values
-        AllRefFlatGene = pd.read_csv('RefFlatGeneSymbolGeneID_18434Genes_111909', header=None, delim_whitespace=True).values
-        AllRefFlatGeneID = AllRefFlatGene[:, 0]
-        AllRefFlatGeneNames = AllRefFlatGene[:, 1]
-    else:
-        HumanGeneChrPos = pd.read_csv("AllHumanGeneChrPosStrand_RefSeq_hg19_072111", header=None, delim_whitespace=True).values
-        hotspot_boundaries = pd.read_csv("hotspot_boundaries_b37_hg19_072111", header=None, delim_whitespace=True).values
-        PrunedSNPsChrPos = pd.read_csv("CEU_HapMap_pruned_SNPs_ChrNumPos_hg19_072111", header=None, delim_whitespace=True).values
-        AllRefFlatGene = pd.read_csv('AllHumanGeneNames_RefSeq_hg19_072111', header=None, delim_whitespace=True).values
-        AllRefFlatGeneID = AllRefFlatGene[:, 0]
-        AllRefFlatGeneNames = AllRefFlatGene[:, 1]
-
-    calculate_Scores_confounders = 1
-    GeneScoreMetric = 1
-    score_signif_direct = 1
+    
+    HumanGeneChrPos = pd.read_csv(GENE_FILEPATH[Genome_build], header=None, delim_whitespace=True).values
+    hotspot_boundaries = pd.read_csv(HOTSPOT_BOUNDARIES_FILEPATH[Genome_build], header=None, delim_whitespace=True).values
+    PrunedSNPsChrPos = pd.read_csv(PRUNED_SNPS_FILEPATH[Genome_build], header=None, delim_whitespace=True).values
+    AllRefFlatGene = pd.read_csv(GENE_NAME_FILEPATH[Genome_build], header=None, delim_whitespace=True).values
+    
+    AllRefFlatGeneID = AllRefFlatGene[:, 0]
+    AllRefFlatGeneNames = AllRefFlatGene[:, 1]
 
     if Remove_HLA == 1:
         find_not_HLA_reg = np.logical_not(inHLAregion(HumanGeneChrPos, HLA_region['st'], HLA_region['en']))
@@ -137,18 +145,12 @@ def magenta(config):
     n_r, n_c = GWAS_SNP_ChrNumPosZscoresPval.shape
 
     if n_c < 4 and np.max(GWAS_SNP_ChrNumPosZscoresPval[:, 2]) <= 1:
-        Input_file_SNPpval_only = 1
-    else:
-        Input_file_SNPpval_only = 0
-
-    if print_best_SNP_OR == 1:
-        if GWAS_OR_filename:
-            GWAS_SNP_OR_L95_U95 = pd.read_csv(GWAS_OR_filename, header=None, delim_whitespace=True).values
-            GWAS_SNP_OR_L95_U95 = GWAS_SNP_OR_L95_U95[find_GWAS_SNP_ChrNumPosZscoresPval_isan]
-
-    if Input_file_SNPpval_only == 1:
         GWAS_SNPChrNumPos_ZscoresCalculatedFromPval = Converting_GWAS_TwoTailedPval_to_Zscores(GWAS_SNP_ChrNumPosZscoresPval)
         GWAS_SNP_ChrNumPosZscoresPval = GWAS_SNPChrNumPos_ZscoresCalculatedFromPval
+
+    if print_best_SNP_OR == 1 and GWAS_OR_filename:
+        GWAS_SNP_OR_L95_U95 = pd.read_csv(GWAS_OR_filename, header=None, delim_whitespace=True).values
+        GWAS_SNP_OR_L95_U95 = GWAS_SNP_OR_L95_U95[find_GWAS_SNP_ChrNumPosZscoresPval_isan]
 
 
     #  (3.2) Read in all SNP rs numbers in same order as SNP positions and z-scores/p-values in input table one column of all SNP rs numbers
@@ -164,7 +166,13 @@ def magenta(config):
     StrandOrient = AllGeneChrPos[:, 5]
     if GeneScoreMetric == 1:
         best_pval_or_z = 1
-        BestSNPPerGeneChrNumPosZScores, NumSNPs_per_gene, Best_SNP_rs = ExtractGeneScoreBestSNP_PvalZscore_NumSNPsPerGene(AllGeneChrPos[:, :3], GWAS_SNP_ChrNumPosZscoresPval, Gene_boundr_upstr, Gene_boundr_downstr, StrandOrient, best_pval_or_z, AllSNP_rs_num)
+        BestSNPPerGeneChrNumPosZScores, NumSNPs_per_gene, Best_SNP_rs = ExtractGeneScoreBestSNP_PvalZscore_NumSNPsPerGene(AllGeneChrPos[:, :3],
+                                                                                                                          GWAS_SNP_ChrNumPosZscoresPval,
+                                                                                                                          Gene_boundr_upstr,
+                                                                                                                          Gene_boundr_downstr,
+                                                                                                                          StrandOrient,
+                                                                                                                          best_pval_or_z,
+                                                                                                                          AllSNP_rs_num)
 
         Uncorr_score = np.abs(BestSNPPerGeneChrNumPosZScores)
 
@@ -625,4 +633,17 @@ def magenta(config):
     logger.log("Time it took the program to run: {0} minutes = {1} hours = {2} days\n", run_time / 60, run_time / 3600, run_time / (3600 * 24))
 
 if __name__ == '__main__':
-    magenta()
+    parser = argparse.ArgumentParser(description='Experimental port of the MAGENTA software to Python.')
+    parser.add_argument('-c', '--config', default='config.yml', type=str, help='configuration file name.')
+    parser.add_argument('-t', '--threads', default=1, type=int, help='a number of threads used for computation')
+
+    args = parser.parse_args()
+
+    if args.threads > 1:
+        try:
+            import concurrent.futures
+        except ImportError:
+            raise ImportError('For multithreading, please install "futures" package via `pip install futures`')
+
+    magenta(args)
+

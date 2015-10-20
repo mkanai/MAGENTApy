@@ -149,5 +149,14 @@ print_best_SNP_OR: 0
 # Enter 1 to calculate a false discovery rate; enter 0 not to calculate FDR
 calculate_FDR: 1
 
+# 1=recalcaulted Best-SNP-per-gene score and confounders, 0=do not calculate Best-SNP-per-gene score and confounders
+calculate_Scores_confounders: 1 
+
+# 1=Best SNP per gene score; in the future will test other scoring metrics such as an average over a set of SNP in linkage equilibrbium
+GeneScoreMetric: 1
+
+# 1=lower gene score values are more significant (e.g. p-values); 0=higher gene score values are more significant (e.g. normalized gene scores, z-scores)
+score_signif_direct: 1
+
 # Enter a seed number for random generator; default value is the computer time. only accepts numbers except for "time".
 seed: time

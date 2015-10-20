@@ -1,5 +1,6 @@
 import numpy as np
-from utils import *
+
+from .utils import *
 
 
 def ExtractGeneScoreBestSNP_PvalZscore_NumSNPsPerGene(GeneSubsetChrPos, All_SNP_scores_pos, interval_up, interval_down, strand, best_pval_or_z, SNP_rs):

@@ -6,7 +6,7 @@ import sys
 
 BUFLINENUM = 65536
 MAXIDLEN = 256
-MAXGENENUM_PER_GENESET =16384
+MAXGENENUM_PER_GENESET = 16384
 
 
 class Writer(object):
@@ -44,13 +44,12 @@ def get_valid_filename(filename, dir=''):
     return os.path.join(dir, filename.replace('/', '_'))
 
 
-def inHLAregion(HumanGeneChrPos, st, en):
+def inHLAregion(HumanGeneChrPos, HLA_start, HLA_end):
     chrom = HumanGeneChrPos[:, 0]
     start = HumanGeneChrPos[:, 1]
     end = HumanGeneChrPos[:, 2]
 
     return np.logical_and(np.equal(chrom, 6),
-                          logical_or(logical_and(np.less(start, st), np.greater(end, st), np.less_equal(end, en)),
-                                     np.logical_and(np.greater_equal(start, st), np.less_equal(end, en)),
-                                     logical_and(np.greater_equal(start, st), np.less(start, en), np.greater(end, en)),
-                                     np.logical_and(np.less_equal(start, st), np.greater_equal(end, en))))
+                          np.greater(np.fmin(end, HLA_end)
+                                     - np.fmax(start, HLA_start), 0))
+
