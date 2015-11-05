@@ -42,6 +42,8 @@ def magenta(args):
 
     GWAS_SNP_score_file_name = config['GWAS_SNP_score_file_name']
     GeneSet_db_file_name = config['GeneSet_db_file_name']
+    if not os.path.exists(GeneSet_db_file_name):
+        GeneSet_db_file_name = os.path.join(BASEDIR, GeneSet_db_file_name)
     Flag_gene_set_file_name = config['Flag_gene_set_file_name']
     match_genes_GeneID = config['match_genes_GeneID']
     GWAS_OR_filename = config['GWAS_OR_filename']

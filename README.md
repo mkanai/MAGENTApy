@@ -20,8 +20,7 @@ Edit `config.yml`, or specify your own configuration by `--config myconfig.yml`.
 - numpy
 - scipy
 - pandas
-- pyyaml
-- click (to be replaced)
+- pyaml
 
 
 ## Copyright
